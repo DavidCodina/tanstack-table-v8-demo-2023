@@ -101,8 +101,6 @@ const Home = () => {
                 subtitle: ''
               })
             }
-
-            setShowControls((v) => !v)
           }}
           text='Toggle Title Info'
         />

@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/tanstack-table-v8-demo-2023/static/css/main.fb2c052a.css",
-    "main.js": "/tanstack-table-v8-demo-2023/static/js/main.2edecd31.js",
-    "static/js/808.08226e4e.chunk.js": "/tanstack-table-v8-demo-2023/static/js/808.08226e4e.chunk.js",
+    "main.js": "/tanstack-table-v8-demo-2023/static/js/main.d224d165.js",
+    "static/js/808.79e4f1e6.chunk.js": "/tanstack-table-v8-demo-2023/static/js/808.79e4f1e6.chunk.js",
     "static/js/977.3455a04a.chunk.js": "/tanstack-table-v8-demo-2023/static/js/977.3455a04a.chunk.js",
     "index.html": "/tanstack-table-v8-demo-2023/index.html",
     "main.fb2c052a.css.map": "/tanstack-table-v8-demo-2023/static/css/main.fb2c052a.css.map",
-    "main.2edecd31.js.map": "/tanstack-table-v8-demo-2023/static/js/main.2edecd31.js.map",
-    "808.08226e4e.chunk.js.map": "/tanstack-table-v8-demo-2023/static/js/808.08226e4e.chunk.js.map",
+    "main.d224d165.js.map": "/tanstack-table-v8-demo-2023/static/js/main.d224d165.js.map",
+    "808.79e4f1e6.chunk.js.map": "/tanstack-table-v8-demo-2023/static/js/808.79e4f1e6.chunk.js.map",
     "977.3455a04a.chunk.js.map": "/tanstack-table-v8-demo-2023/static/js/977.3455a04a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.fb2c052a.css",
-    "static/js/main.2edecd31.js"
+    "static/js/main.d224d165.js"
   ]
 }

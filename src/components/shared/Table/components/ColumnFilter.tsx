@@ -11,9 +11,6 @@ interface IFilterColumn {
   style?: React.CSSProperties
 }
 
-// The docs example has a much more complex filter that is worth reviewing.
-// https://codesandbox.io/s/github/tanstack/table/tree/main/examples/react/filters?from-embed=&file=/src/main.tsx:9197-9217
-
 /* ========================================================================
                                 ColumnFilter                
 ======================================================================== */

@@ -9,32 +9,22 @@ import { columns } from './columns'
 /* ========================================================================
                                 Home
 ======================================================================== */
-//! Oddly, toggling pagination changes the width of the columns... Not sure why...
 
 const Home = () => {
-  // Test potential rerenders of Table. Expected behavior: Table rerenders once
-  // for each time count updates, but no useEffect fnctions within Table are triggered.
-  const [count, setCount] = useState(0)
-
+  const [count, setCount] = useState(0) // Used to test Table renders (+useEffects, etc).
   const [titleInfo, setTitleInfo] = useState({
     title: 'An amazing title here!',
     subtitle: "This is an amazing table! It can do lot's of stuff!"
   })
-
   const [columnOrder, setColumnOrder] = useState<string[]>([])
-
   const [columnVisibility, setColumnVisibility] = useState<
     Record<string, boolean>
   >({ select: false })
-
   const [showControls, setShowControls] = useState(true)
   const [showGlobalFilter, setShowGlobalFilter] = useState(true)
   const [showPagination, setShowPagination] = useState(true)
-
   const [showExportCSVButton, setShowExportCSVButton] = useState(true)
-
   const [showVisibilityChecks, setShowVisibilityChecks] = useState(false)
-
   const [showColumnFilters, setShowColumnFilters] = useState(true)
   const [showFooter, setShowFooter] = useState(false)
 
@@ -93,15 +83,6 @@ const Home = () => {
           marginBottom: 15
         }}
       >
-        {/* 
-
-        const [titleInfo, setTitleInfo] = useState({
-    title: 'An amazing title here!',
-    subtitle: "This is an amazing table! It can do lot's of stuff!"
-  })
-        
-        */}
-
         <Switch
           checked={showControls}
           id='toggle-title-info'
@@ -311,12 +292,12 @@ const Home = () => {
         columnSelectCheckboxGroupStyle={{}}
         // columnSelectCheckboxClassName='form-check-input'
         columnSelectCheckboxStyle={{}}
-        //! bodyClassName='ms-table-group-divider' // Available as CSS class in Table.css, but not as prop.
+        bodyClassName=''
         bodyStyle={{
           textAlign: 'center',
           verticalAlign: 'middle'
         }}
-        //! footerClassName='ms-table-group-divider' // Available as CSS class in Table.css, but not as prop.
+        footerClassName=''
         footerStyle={{ textAlign: 'center', verticalAlign: 'middle' }}
         data={data}
         // columnOrder is an optional prop that allows the consumer to

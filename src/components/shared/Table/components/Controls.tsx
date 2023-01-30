@@ -40,7 +40,7 @@ export const Controls = ({
   globalFilter,
   setGlobalFilter,
   pageSize: pageSizeProp,
-  pageSizes, // Note: pageSize will also added to the page size <select> during the mapping process.
+  pageSizes, // pageSize will also added to the page size <select> during the mapping process.
   showControls,
   showGlobalFilter,
   showPagination,
@@ -133,17 +133,6 @@ export const Controls = ({
           </button>
         </li>
 
-        {/* In react-pagination-2023 repo I had an elaborate system that enabled numbered
-        items to be shown such that there were always a set amount of numbered items
-        (e.g., 1, 3, 5, 7). That type of implementation is a bit more complex, and not
-        particularly necessary. If we wanted to do that, we would need the following
-        two pieces of information.
-
-          - table.getState().pagination.pageIndex (0 based)
-          - table.getPageCount()
-        
-        That said, I'm not really inclined to build it out unless requested... */}
-
         {/* Show current page: x of n */}
         <li
           className={paginationItemClassName || 'ms-table-page-item'}
@@ -169,7 +158,7 @@ export const Controls = ({
 
             <span style={{ color: '#999', margin: '0 5px' }}>|</span>
 
-            {/* Manually input the page number */}
+            {/* Allow user to input the page number */}
             <input
               className={pageNumberInputClassName || 'ms-table-form-control'}
               min={1}
@@ -322,8 +311,6 @@ export const Controls = ({
 
     return (
       <div
-        //# Do we want the consumer to be able to modify this?
-        // className=''
         style={{
           backgroundColor: '#fff',
           border: '1px solid #ccc',
@@ -363,7 +350,7 @@ export const Controls = ({
             }}
           />
           <label
-            className='form-check-label' //# What about this ??? .............................
+            className='form-check-label'
             htmlFor='toggle-all'
             style={{ cursor: 'pointer' }}
           >
@@ -398,16 +385,14 @@ export const Controls = ({
                 }}
               />{' '}
               <label
-                className='ms-table-form-check-label' //# What about this ??? .............................
+                className='ms-table-form-check-label'
                 htmlFor={column.id}
                 style={{ cursor: 'pointer' }}
               >
-                {/* 
-                This exposes the actual data keys to the end user. This may not be ideal.
+                {/* This exposes the actual data keys to the end user. This may not be ideal.
                 The Table --> Controls component could receive a visibilityCheckLabels 
                 array that provides transformations for each associated label. For example:
-                [ { id: 'first_name', formatted: 'First Name' }, { id: 'last_name', formatted: 'Last Name'}, ... ]
-                */}
+                [ { id: 'first_name', formatted: 'First Name' }, { id: 'last_name', formatted: 'Last Name'}, ... ] */}
                 {column.id}
               </label>
             </div>
@@ -430,7 +415,7 @@ export const Controls = ({
       className={controlsClassName}
       style={{
         alignItems: 'flex-start',
-        //! Hardcoding the border color will lead to problems if the user ever wants to change the table border color.
+        //! :( Hardcoding the border color could lead to problems if the user ever wants to change the table border color.
         borderBottom: atLeastOneVisibleColumn ? '1px solid #dee2e6' : '',
         display: 'flex',
         flexWrap: 'wrap',

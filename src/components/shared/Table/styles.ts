@@ -333,7 +333,6 @@ export const SCTableContainer = styled.div`
     font-size: 14px;
     font-weight: 400;
     line-height: 1.5;
-    // min-width: 0px !important; /* Firefox ???*/
     padding: 4px 8px;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     width: 100%;

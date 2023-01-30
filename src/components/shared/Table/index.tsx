@@ -18,47 +18,9 @@ import { includesString, fuzzyFilter } from './filters'
 import { SCTableContainer } from './styles'
 import { ITable } from './types'
 
-///////////////////////////////////////////////////////////////////////////
-//
-//
-// 1. Add in a column that is built from a nested object.
-//    This will also entail a custom filter, and custom sorting
-//    function that is defined from within the column definition file.
-//
-// 2. Add TS Doc info for type definitions.
-//
-// 3. Consider Adding title/subtitle props. The UI would sit above the controls.
-//
-// ...
-//
-// Testing:
-// 1. Test all props.
-// 2. Test memoization to make sure it's not infinitely rerendering.
-// 3. Test useEffects against the count to make sure that they are not rerendering.
-// 4. Test table in general to make sure it's not rendering a whole bunch.
-// 5. Test in the total absence of Bootstrap.
-// 6. Compare all props against those of BasicTable. Also make sure the CSS names
-//    don't necessarily conflict with those of BasicTable.
-//
-///////////////////////////////////////////////////////////////////////////
-
 /* ========================================================================
                                 Table
 ======================================================================== */
-///////////////////////////////////////////////////////////////////////////
-//
-// 1. Install with: npm install @tanstack/react-table
-//
-// 2. Create a Table component that implements useReactTable() hook to initialize a table instance.
-//    Notice how data, columns are passed in as props in order to maximize reusability.
-//
-// 3. More info on filtering can be found here: https://tanstack.com/table/v8/docs/api/features/filters
-//
-// 4. More info on sorting can be found here: https://tanstack.com/table/v8/docs/api/features/sorting
-//
-// 5. More info on pagination can be found here: https://tanstack.com/table/v8/docs/api/features/pagination
-//
-///////////////////////////////////////////////////////////////////////////
 
 export const Table = ({
   // className & style props for basic table elements.
@@ -96,7 +58,6 @@ export const Table = ({
   // className & style props for row/column selection checkboxes.
   rowSelectCheckboxClassName = '',
   rowSelectCheckboxStyle = {},
-
   columnSelectCheckboxGroupClassName = '',
   columnSelectCheckboxGroupStyle = {},
   columnSelectCheckboxClassName = '',
@@ -154,10 +115,6 @@ export const Table = ({
   csvExportFileName = '',
   csvHeaders
 }: ITable) => {
-  // if (process.env.NODE_ENV === 'development') {
-  //   console.log('<Table /> rendered.')
-  // }
-
   const [globalFilter, setGlobalFilter] = useState('')
   const [columnFilters, setColumnFilters] = useState<any[]>([])
   const [sorting, setSorting] = useState<SortingState>([])
@@ -165,7 +122,7 @@ export const Table = ({
 
   // Initialize columnVisibility using columnVisibilityProp.
   // Otherwise default to {}. columnVisibility is always an object columnIds
-  // keys and boolean values.  A column is visible if the key/value is omitted
+  // keys and boolean values. A column is visible if the key/value is omitted
   // or if it is set to true. A column is not visible when it's key is listed
   // and the associated value is set to false
   const [columnVisibility, setColumnVisibility] = useState<
@@ -374,227 +331,145 @@ export const Table = ({
       pageIndex: pageIndex,
       pageSize: pageSize
     }
-    // Setting default column order here will only work if the
-    // columnOrder feature is not implemented. If it is, it will
-    // defer to the columnOrder state.
-    // columnOrder: []
   }
 
-  const table = useReactTable(
-    {
-      data,
-      // If you add an array in here, then it will cause an infinite rerender.
-      columns: selectable ? colsPlusSelectable : cols,
+  const table = useReactTable({
+    data,
+    // If you add an array in here, then it will cause an infinite rerender.
+    columns: selectable ? colsPlusSelectable : cols,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    filterFns: { fuzzy: fuzzyFilter },
 
-      // https://tanstack.com/table/v8/docs/api/features/filters#filterfns
-      // This option allows you to define custom filter functions that can be referenced in a column's filterFn
-      // DC: However, if you don't intend to ever use it in the columns definition, then it's not really necessary.
-      getCoreRowModel: getCoreRowModel(),
-      getFilteredRowModel: getFilteredRowModel(),
-      getSortedRowModel: getSortedRowModel(),
-      getPaginationRowModel: getPaginationRowModel(),
-      filterFns: { fuzzy: fuzzyFilter },
+    // Note: when a change occurs, it usually entails two renders. Why?
+    // Presumably, the table updates its internal state causing a render, then
+    // it calls the associated setter. I'm not sure if this is actually the
+    // case, but I wittled the Table all the way down to just the sorting feature,
+    // and it still double-rendered. Thus, it's not an optimization issue related
+    // to how I implemented it. Rather, it's just the way it works with Tanstack table.
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    onSortingChange: setSorting,
+    // Unlike with the old react-table (v7), we seem to need
+    // to explicitly define the filter function. We should also
+    // be able to pass in one of the built-in strings.
+    globalFilterFn: includesString,
 
-      // Note: when a change occurs, it usually entails two renders. Why?
-      // Presumably, the table updates its internal state causing a render, then
-      // it calls the associated setter. I'm not sure if this is actually the
-      // case, but I wittled the Table all the way down to just the sorting feature,
-      // and it still double-rendered. Thus, it's not an optimization issue related
-      // to how I implemented it. Rather, it's just the way it works with Tanstack table.
-      onColumnFiltersChange: setColumnFilters,
-      onGlobalFilterChange: setGlobalFilter,
-      onSortingChange: setSorting,
-      // Unlike with the old react-table (v7), we seem to need
-      // to explicitly define the filter function. We should also
-      // be able to pass in one of the built-in strings. However,
-      // some of the built-in filter functions seem to be broken.
-      // Consequently, I have redefined it here and fixed the bug.
-      globalFilterFn: includesString,
-
-      // The type defs define this as: sortingFns?: Record<string, SortingFn<any>>
-      // However, if we add a custom sortingFn, it will work when used by a
-      // column definition, but Typescript seems not to recognize it.
-      sortingFns: {
+    // The type defs define this as: sortingFns?: Record<string, SortingFn<any>>
+    // However, if we add a custom sortingFn, it will work when used by a
+    // column definition, but Typescript seems not to recognize it.
+    sortingFns: {
+      ///////////////////////////////////////////////////////////////////////////
+      //
+      // https://tanstack.com/table/v8/docs/api/features/sorting#sorting-functions
+      // This is the type signature for every sorting function:
+      //
+      //   export type SortingFn<TData extends AnyData> = {
+      //     (rowA: Row<TData>, rowB: Row<TData>, columnId: string): number
+      //   }
+      //
+      // sortByRawValue is used when the associated value has been transformed from an
+      // ISO string to a formatted date, and that new value is being used as the
+      // accessor. Why? would it be used as the accesor? Because then global and
+      // column filtering will work as expected. However, we need to then fix the
+      // sorting such that it uses the original ISO string value.
+      //
+      // This function will now be accessible from the column definition by
+      // using the following property:
+      //
+      //  sortingFn: 'sortByRawValue' as any
+      //
+      // It's unlikely that we'll be sorting actual date objects, but if that's the
+      // case, there's actually a built-in 'datetime' sorting function.
+      //
+      ///////////////////////////////////////////////////////////////////////////
+      sortByRawValue: (rowA: any, rowB: any, columnId: any): number => {
         ///////////////////////////////////////////////////////////////////////////
         //
-        // https://tanstack.com/table/v8/docs/api/features/sorting#sorting-functions
-        // This is the type signature for every sorting function:
+        // Strangely, both in the default sorting function and in this one it
+        // begins with the desc for numbers, but asc for strings.
+        // It will still sort the values correctly (i.e, asc will still be lowest to highest, etc.).
+        // It's just the order of the processes is different for different primitives.
+        // This is definitely a tanstack table thing, and not coming from the implementation.
+        // In any case, sortByRawValue will handle numbers and strings correctly.
         //
-        //   export type SortingFn<TData extends AnyData> = {
-        //     (rowA: Row<TData>, rowB: Row<TData>, columnId: string): number
-        //   }
-        //
-        // sortByRawValue is used when the associated value has been transformed from an
-        // ISO string to a formatted date, and that new value is being used as the
-        // accessor. Why? would it be used as the accesor? Because then global and
-        // column filtering will work as expected. However, we need to then fix the
-        // sorting such that it uses the original ISO string value.
-        //
-        // This function will now be accessible from the column definition by
-        // using the following property:
-        //
-        //  sortingFn: 'sortByRawValue' as any
-        //
-        // It's unlikely that we'll be sorting actual date objects, but if that's the
-        // case, there's actually a built-in 'datetime' sorting function.
+        // Where it will struggle is with stringified numbers such that '100' will be considered
+        // lower than '20'. This is the expected behavior and also occurs within tanstack table's
+        // default sorter. In cases where your data has numbers as string values, the best approach
+        // is to probably transform them into numbers from within the accessor function.
+        // However, another approach might be to have a specific sorter for them: sortStringAsNumber
         //
         ///////////////////////////////////////////////////////////////////////////
-        sortByRawValue: (rowA: any, rowB: any, columnId: any): number => {
-          ///////////////////////////////////////////////////////////////////////////
-          //
-          // Strangely, both in the default sorting function and in this one it
-          // begins with the desc for numbers, but asc for strings.
-          // It will still sort the values correctly (i.e, asc will still be lowest to highest, etc.).
-          // It's just the order of the processes is different for different primitives.
-          // This is definitely a tanstack table thing, and not coming from the implementation.
-          // In any case, sortByRawValue will handle numbers and strings correctly.
-          //
-          // Where it will struggle is with stringified numbers such that '100' will be considered
-          // lower than '20'. This is the expected behavior and also occurs within tanstack table's
-          // default sorter. In cases where your data has numbers as string values, the best approach
-          // is to probably transform them into numbers from within the accessor function.
-          // However, another approach might be to have a specific sorter for them: sortStringAsNumber
-          //
-          ///////////////////////////////////////////////////////////////////////////
-          const valueA = rowA.original[columnId]
-          const valueB = rowB.original[columnId]
-          return valueA < valueB ? -1 : 1
-        },
+        const valueA = rowA.original[columnId]
+        const valueB = rowB.original[columnId]
+        return valueA < valueB ? -1 : 1
+      },
 
-        // Use this sorter when number values are stored as strings, but you want to sort them
-        // as numbers. Alternatively, use the accessor to function to transform the function.
-        sortStringAsNumber: (rowA: any, rowB: any, columnId: any): number => {
-          // null values are treated as 0.
-          // undefined values seem to break the ordering.
-          // Basically, Number('') and Number(null) evaluate to 0,
-          // but Number(undefined) evaluates to NaN as would Number('sadf').
-          //
-          // For this reason, I've added a failsafe that converts anything
-          // that doesn't convert successfully to a number to 0.
-          const isNum = (v: any): v is Number => {
-            return typeof v === 'number' && !isNaN(v)
-          }
-
-          const valueA = rowA.original[columnId]
-          const valueB = rowB.original[columnId]
-
-          let numberA: any = Number(valueA)
-          let numberB: any = Number(valueB)
-
-          if (!isNum(numberA)) {
-            numberA = 0
-          }
-
-          if (!isNum(numberB)) {
-            numberA = 0
-          }
-
-          return numberA < numberB ? -1 : 1
+      // Use this sorter when number values are stored as strings, but you want to sort them
+      // as numbers. Alternatively, use the accessor to function to transform the function.
+      sortStringAsNumber: (rowA: any, rowB: any, columnId: any): number => {
+        // null values are treated as 0.
+        // undefined values seem to break the ordering.
+        // Basically, Number('') and Number(null) evaluate to 0,
+        // but Number(undefined) evaluates to NaN as would Number('sadf').
+        //
+        // For this reason, I've added a failsafe that converts anything
+        // that doesn't convert successfully to a number to 0.
+        const isNum = (v: any): v is Number => {
+          return typeof v === 'number' && !isNaN(v)
         }
-      },
-      ///////////////////////////////////////////////////////////////////////////
-      //
-      // When the pagination changes, I want to reset the 'go to page' input.
-      // However, if we were to use onPaginationChange it would nullify all of
-      // the built-in logic and we would have to implement controlled pagination.
-      //
-      //   https://github.com/TanStack/table/discussions/3898
-      //   https://codesandbox.io/s/github/tanstack/table/tree/main/examples/react/pagination-controlled?from-embed=&file=/src/main.tsx:2485-2528
-      //   onPaginationChange: setPagination,
-      //
-      // Fortunately, we don't have to do that, instead we only need to watch
-      // pageCount with a useEffect().
-      //
-      ///////////////////////////////////////////////////////////////////////////
-      state: {
-        columnFilters,
-        globalFilter,
-        sorting,
-        rowSelection,
-        columnVisibility,
-        columnOrder
-      },
-      onRowSelectionChange: setRowSelection,
-      onColumnOrderChange: setColumnOrder,
-      onColumnVisibilityChange: setColumnVisibility,
 
-      // https://tanstack.com/table/v8/docs/api/core/table#initialstate
-      initialState: initialState
-      // debugTable: true,
-      // debugHeaders: true,
-      // debugColumns: false
-    }
-    // In the codevolution tutorial for react table v7, he used the hooks function
-    // here to add a select column to the columns. In v8 there is no longer a hooks
-    // function. Instead, I'm using colsPlusSelectable above.
-    // (hooks: any) => { }
-  )
+        const valueA = rowA.original[columnId]
+        const valueB = rowB.original[columnId]
 
-  ///////////////////////////////////////////////////////////////////////////
-  //
-  // As an alternative to creating colsPlusSelectable above, we could instead do this.
-  // However, the docs indicate that, "it is generally not recommended to bypass your adapters
-  // strategy for updating table options." In other words, using the colsPlusSelectable
-  // approach is probably the best way to do it:
-  // https://tanstack.com/table/v8/docs/api/core/table#setoptions
-  //
-  // table.setOptions((previousOptions: any) => {
-  //   const columnIds = previousOptions.columns.map(
-  //     (column: any) => column.id || column.accessorKey || ''
-  //   )
-  //
-  //   const selectIndex = columnIds.indexOf('select')
-  //
-  //   if (selectIndex !== -1) {
-  //     console.log('The select column already exists...')
-  //     return previousOptions
-  //   }
-  //
-  //   const selectableColumn: any = {
-  //     id: 'select',
-  //     header: ({ table }: any) => (
-  //       <IndeterminateCheckbox
-  //         {...{
-  //           checked: table.getIsAllRowsSelected(),
-  //           indeterminate: table.getIsSomeRowsSelected(),
-  //           onChange: table.getToggleAllRowsSelectedHandler()
-  //         }}
-  //       />
-  //     ),
-  //     cell: ({ row }: any) => (
-  //       <div className='text-center'>
-  //         <IndeterminateCheckbox
-  //           {...{
-  //             checked: row.getIsSelected(),
-  //             indeterminate: row.getIsSomeSelected(),
-  //             onChange: row.getToggleSelectedHandler()
-  //           }}
-  //         />
-  //       </div>
-  //     ),
-  //     enableSorting: false,
-  //     enableFilter: false
-  //   }
-  //
-  //   if (hasFooter) {
-  //     selectableColumn.footer = ({ table }: any) => (
-  //       <IndeterminateCheckbox
-  //         {...{
-  //           checked: table.getIsAllRowsSelected(),
-  //           indeterminate: table.getIsSomeRowsSelected(),
-  //           onChange: table.getToggleAllRowsSelectedHandler()
-  //         }}
-  //       />
-  //     )
-  //   }
-  //
-  //   console.log('Adding select column...')
-  //   previousOptions.columns.unshift(selectableColumn)
-  //
-  //   return { ...previousOptions }
-  // })
-  //
-  ///////////////////////////////////////////////////////////////////////////
+        let numberA: any = Number(valueA)
+        let numberB: any = Number(valueB)
+
+        if (!isNum(numberA)) {
+          numberA = 0
+        }
+
+        if (!isNum(numberB)) {
+          numberA = 0
+        }
+
+        return numberA < numberB ? -1 : 1
+      }
+    },
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    // When the pagination changes, I want to reset the 'go to page' input.
+    // However, if we were to use onPaginationChange it would nullify all of
+    // the built-in logic and we would have to implement controlled pagination.
+    //
+    //   https://github.com/TanStack/table/discussions/3898
+    //   https://codesandbox.io/s/github/tanstack/table/tree/main/examples/react/pagination-controlled?from-embed=&file=/src/main.tsx:2485-2528
+    //   onPaginationChange: setPagination,
+    //
+    // Fortunately, we don't have to do that, instead we only need to watch
+    // pageCount with a useEffect().
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    state: {
+      columnFilters,
+      globalFilter,
+      sorting,
+      rowSelection,
+      columnVisibility,
+      columnOrder
+    },
+    onRowSelectionChange: setRowSelection,
+    onColumnOrderChange: setColumnOrder,
+    onColumnVisibilityChange: setColumnVisibility,
+
+    // https://tanstack.com/table/v8/docs/api/core/table#initialstate
+    initialState: initialState
+    // debugTable: true,
+    // debugHeaders: true,
+    // debugColumns: false
+  })
 
   /* ======================
      Column Visibility
@@ -605,10 +480,6 @@ export const Table = ({
   // If no columns are visible then we return null in the JSX instead of showing the table.
   const atLeastOneVisibleColumn =
     Array.isArray(visibleLeafColumns) && visibleLeafColumns.length > 0
-
-  // If you wanted to prevent the user from hiding controls when
-  // there were no visible columns, you could do something like this.
-  // showControls = !atLeastOneVisibleColumn ? true : showControls
 
   const tableSetColumnVisibility = table.setColumnVisibility
 
@@ -692,7 +563,6 @@ export const Table = ({
   ====================== */
   // This useEffect() watches the showPagination prop.
 
-  //! No need to call this on mount...........................................................................
   const setPageSize = table.setPageSize
   useEffect(() => {
     if (!showPagination) {

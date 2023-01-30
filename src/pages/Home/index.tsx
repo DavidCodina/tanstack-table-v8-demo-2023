@@ -84,7 +84,7 @@ const Home = () => {
         }}
       >
         <Switch
-          checked={showControls}
+          checked={titleInfo?.title !== ''}
           id='toggle-title-info'
           labelStyle={{
             fontFamily: 'Inconsolata, monospace'

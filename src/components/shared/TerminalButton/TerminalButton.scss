@@ -1,0 +1,54 @@
+// https://css-tricks.com/old-timey-terminal-styling/
+
+.terminal-button {
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  background-color: #000;
+  background-image: radial-gradient(rgba(0, 150, 0, 0.75), black 120%);
+  border: 1px solid #bcc6cc;
+  border-radius: 6px;
+  color: rgb(0, 150, 0);
+  font-family: Inconsolata, monospace;
+  position: relative;
+  // text-shadow: 0 0 5px rgb(0, 150, 0);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+  transition: all 0.1s linear;
+}
+
+.terminal-button:hover {
+  box-shadow: inset 0 0 2px 1px #000;
+}
+
+.terminal-button:focus {
+  border-color: rgba(0, 150, 0, 0.75);
+  box-shadow: inset 0 0 2px 1px #000, 0 0 0 0.25rem rgba(0, 0, 0, 0.75);
+}
+
+.terminal-button::after {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(black, 0.3),
+    rgba(black, 0.3) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  border-radius: inherit;
+  content: '';
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}

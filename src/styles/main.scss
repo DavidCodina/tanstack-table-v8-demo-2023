@@ -1,0 +1,267 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import './bootstrap/custom-variables.scss';
+@import '~bootstrap/scss/bootstrap.scss';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    // Using smooth as Bootstrap does is annoying for page switches.
+    // Programmaticaly disabling it every time we switch pages is tedious.
+    // If we ever want smooth scroll for a particular page or feature, it's
+    // easier to programmatically opt in, rather than opting out every time.
+    scroll-behavior: auto; // overwrite bootstrap
+  }
+}
+
+body {
+  background-color: rgb(237, 242, 249);
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+hr {
+  margin: 1rem 0;
+  color: inherit;
+  border: 0;
+  border-top: 1px solid;
+  opacity: 0.25;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.bg-transparent-unimportant {
+  background-color: transparent;
+}
+
+.bg-white-unimportant {
+  background-color: #fff;
+}
+
+.bg-off-white {
+  background-color: #fafafa;
+}
+
+/* ======================
+    .transition-none 
+====================== */
+
+.transition-none * {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -ms-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
+}
+
+/* ======================
+    .hide-scrollbar 
+====================== */
+
+.hide-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ======================
+        .outline
+====================== */
+/* One way to create a text outline is with -webkit-text-stroke-width &
+-webkit-text-stroke-color. The problem there is that it may not be
+applicable to all browsers.
+
+Another approach entails using <svg>s. However, they seem very difficult 
+to manage, and the text doesn't wrap.
+
+  https://www.w3schools.com/graphics/svg_text.asp 
+  https://stackoverflow.com/questions/4919076/outline-effect-to-text 
+
+  <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <svg
+      style={{
+        // display: 'inline-block',
+        fontFamily: 'Luckiest Guy',
+        fontSize: 50,
+        fontWeight: 'bold',
+        lineHeight: 1,
+        margin: '25px auto'
+      }}
+      height='38'
+      width='150'
+    >
+      <text
+        x='0'
+        y='37' // This corresponds to the bottom of the text
+        fill='#fff'
+        stroke='#000'
+        strokeWidth='1px'
+      >
+        Demo
+      </text>
+    </svg>
+  </div>
+
+
+// https://stackoverflow.com/questions/4919076/outline-effect-to-text
+A third approach involve the use of text-shadows. This is the most
+practical approach. For example:
+
+<h1
+  className='outline-strong outline-success outline-width-1 outline-shadow'
+  style={{
+    fontSize: 60,
+    fontWeight: 900,
+    margin: '50px auto',
+    textAlign: 'center'
+  }}
+>Testing</h1>
+*/
+
+// 1x
+.outline-weak {
+  --border-color: #000;
+  --border-width: 1px;
+  color: #fff;
+  text-shadow: var(--border-color) 0px 0px var(--border-width);
+  -webkit-font-smoothing: antialiased;
+}
+
+// 10x
+.outline {
+  --border-color: #000;
+  --border-width: 1px;
+  color: #fff;
+  text-shadow: var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width);
+  -webkit-font-smoothing: antialiased;
+}
+
+// 20x
+.outline-strong {
+  --border-color: #000;
+  --border-width: 1px;
+  color: #fff;
+  text-shadow: var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width);
+  -webkit-font-smoothing: antialiased;
+}
+
+// Border colors...
+.outline-primary {
+  --border-color: var(--bs-primary);
+}
+
+.outline-secondary {
+  --border-color: var(--bs-secondary);
+}
+
+.outline-success {
+  --border-color: var(--bs-success);
+}
+
+.outline-info {
+  --border-color: var(--bs-info);
+}
+
+.outline-warning {
+  --border-color: var(--bs-warning);
+}
+
+.outline-danger {
+  --border-color: var(--bs-danger);
+}
+
+.outline-light {
+  --border-color: var(--bs-light);
+}
+
+.outline-dark {
+  --border-color: var(--bs-dark);
+}
+
+// Border widths...
+.outline-width-dot-5 {
+  --border-width: 0.5px;
+}
+
+.outline-width-1 {
+  --border-width: 1px;
+}
+
+.outline-width-1-dot-5 {
+  --border-width: 1.5px;
+}
+
+.outline-width-2 {
+  --border-width: 2px;
+}
+.outline-width-2-dot-5 {
+  --border-width: 2.5px;
+}
+
+.outline-shadow {
+  filter: drop-shadow(0px 1px 0.5px rgba(0, 0, 0, 0.75));
+}
+
+/* ========================================================================
+                            Media Queries
+======================================================================== */
+
+/* sm */
+@media (min-width: 576px) {
+}
+
+/* md */
+@media (min-width: 768px) {
+}
+
+/* lg */
+@media (min-width: 992px) {
+}
+
+/* xl */
+@media (min-width: 1200px) {
+}
+
+/* xxl */
+@media (min-width: 1400px) {
+}
